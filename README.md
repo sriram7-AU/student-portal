@@ -1,19 +1,19 @@
-# 🎓 StudentPortal – Money Management & Job Search
+#  StudentPortal – Money Management & Job Search
 
 A complete Flask web application for students to **track their finances** and **search for jobs/internships** — built as per college project guidelines.
 
 ---
 
-## 📌 Features
+##  Features
 
-### 💰 Money Management
+###  Money Management
 - Add income and expense transactions with categories
 - View income vs. expense breakdown with progress bars
 - Filter and search transaction history
 - Monthly summary table (surplus / deficit)
 - Delete transactions with confirmation
 
-### 💼 Job Search Portal
+###  Job Search Portal
 - Browse 8+ pre-seeded job listings (internship, part-time, full-time)
 - Search by title, company, or keyword
 - Filter by job type and location
@@ -22,14 +22,14 @@ A complete Flask web application for students to **track their finances** and **
 - Track all your applications (pending / reviewed / accepted / rejected)
 - Withdraw applications
 
-### 🔐 Authentication
+###  Authentication
 - User registration with password strength meter
 - Secure login / logout
 - Passwords hashed with Werkzeug
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 | Layer     | Technology                          |
 |-----------|-------------------------------------|
@@ -41,7 +41,7 @@ A complete Flask web application for students to **track their finances** and **
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 student_portal/
@@ -73,7 +73,7 @@ student_portal/
 
 ---
 
-## ⚙️ Setup & Run Instructions
+##  Setup & Run Instructions
 
 ### Step 1 — Prerequisites
 Make sure you have **Python 3.8+** installed.
@@ -119,7 +119,7 @@ The SQLite database (`student_portal.db`) and all tables are created **automatic
 
 ---
 
-## 🧪 Test the App
+##  Test the App
 
 1. Go to `http://127.0.0.1:5000`
 2. Click **Get Started Free** → Register a new account
@@ -130,13 +130,13 @@ The SQLite database (`student_portal.db`) and all tables are created **automatic
 
 ---
 
-## 📸 Screenshots
+##  Screenshots
 
 > Add screenshots here after running the app locally.
 
 ---
 
-## 🚀 Deployment (Optional)
+## Deployment (Optional)
 
 ### Deploy to Render (free)
 1. Push code to GitHub
@@ -148,7 +148,7 @@ The SQLite database (`student_portal.db`) and all tables are created **automatic
 
 ---
 
-## 📝 Git Usage
+##  Git Usage
 
 ```bash
 git init
@@ -160,7 +160,7 @@ git push -u origin main
 
 ---
 
-## 👨‍💻 Technologies Used
+##  Technologies Used
 
 - **Flask 3.0** — Web framework
 - **Werkzeug** — Password hashing
