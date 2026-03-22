@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% block title %}Transaction History – StudentPortal{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+      <h4 class="fw-bold mb-1"><i class="bi bi-clock-history me-2 text-primary"></i>Transaction History</h4>
+      <p class="text-muted mb-0">{{ transactions|length }} transaction(s) found</p>
+    </div>
+    <a href="{{ url_for('add_transaction') }}" class="btn btn-primary fw-semibold">
+      <i class="bi bi-plus-circle me-2"></i>Add Transaction
+    </a>
+  </div>
+
+  <!-- Filters -->
+  <div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body p-4">
+      <form method="GET" action="{{ url_for('transaction_history') }}" id="filterForm">
+        <div class="row g-3 align-items-end">
+          <div class="col-md-4">
+            <label class="form-label fw-semibold small">Search</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-search"></i></span>
+              <input type="text" name="search" class="form-control" placeholder="Search description..." value="{{ search }}"/>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold small">Type</label>
+            <select name="type" class="form-select" onchange="this.form.submit()">
+              <option value="all" {% if filter_type == 'all' %}selected{% endif %}>All Types</option>
+              <option value="income"  {% if filter_type == 'income'  %}selected{% endif %}>Income</option>
+              <option value="expense" {% if filter_type == 'expense' %}selected{% endif %}>Expense</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold small">Category</label>
+            <select name="category" class="form-select" onchange="this.form.submit()">
+              <option value="">All Categories</option>
+              {% for cat in categories %}
+              <option value="{{ cat.category }}" {% if filter_cat == cat.category %}selected{% endif %}>
+                {{ cat.category }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Filter</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Transactions Table -->
+  <div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-0">
+      {% if transactions %}
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th class="px-4 py-3">Type</th>
+              <th>Category</th>
+              <th>Amount</th>
+              <th>Description</th>
+              <th>Date</th>
+              <th class="text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for txn in transactions %}
+            <tr>
+              <td class="px-4">
+                <span class="badge rounded-pill bg-{% if txn.type == 'income' %}success{% else %}danger{% endif %}-subtle text-{% if txn.type == 'income' %}success{% else %}danger{% endif %} px-3 py-2">
+                  <i class="bi bi-arrow-{% if txn.type == 'income' %}down{% else %}up{% endif %}-circle me-1"></i>
+                  {{ txn.type | capitalize }}
+                </span>
+              </td>
+              <td class="fw-semibold">{{ txn.category }}</td>
+              <td class="fw-bold text-{% if txn.type == 'income' %}success{% else %}danger{% endif %}">
+                {% if txn.type == 'income' %}+{% else %}−{% endif %}₹{{ "%.2f"|format(txn.amount) }}
+              </td>
+              <td class="text-muted small">{{ txn.description or '—' }}</td>
+              <td class="text-muted small">{{ txn.date }}</td>
+              <td class="text-center">
+                <form method="POST" action="{{ url_for('delete_transaction', txn_id=txn.id) }}"
+                      class="delete-form d-inline"
+                      data-confirm="Delete this transaction of ₹{{ '%.2f'|format(txn.amount) }}?">
+                  <button type="button" class="btn btn-sm btn-outline-danger delete-btn">
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="text-center py-5 text-muted">
+        <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+        <h6>No transactions found</h6>
+        <p class="small">Try adjusting your filters or <a href="{{ url_for('add_transaction') }}">add a new transaction</a>.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content rounded-4 border-0 shadow">
+      <div class="modal-body text-center p-4">
+        <i class="bi bi-exclamation-triangle fs-1 text-warning mb-3 d-block"></i>
+        <h6 class="fw-bold mb-2">Delete Transaction?</h6>
+        <p class="text-muted small mb-4" id="deleteModalMsg"></p>
+        <div class="d-flex gap-2 justify-content-center">
+          <button class="btn btn-secondary btn-sm px-4" data-bs-dismiss="modal">Cancel</button>
+          <button class="btn btn-danger btn-sm px-4" id="confirmDeleteBtn">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

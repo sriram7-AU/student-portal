@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard – StudentPortal{% endblock %}
+
+{% block content %}
+<div class="container">
+  <!-- Welcome Banner -->
+  <div class="welcome-banner rounded-4 p-4 mb-4 text-white d-flex align-items-center justify-content-between flex-wrap gap-3">
+    <div>
+      <h4 class="fw-bold mb-1">👋 Hello, {{ session.user_name }}!</h4>
+      <p class="mb-0 text-white-75">Here's a quick snapshot of your portal activity.</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('add_transaction') }}" class="btn btn-warning btn-sm fw-semibold">
+        <i class="bi bi-plus-circle me-1"></i>Add Transaction
+      </a>
+      <a href="{{ url_for('job_listings') }}" class="btn btn-outline-light btn-sm">
+        <i class="bi bi-search me-1"></i>Browse Jobs
+      </a>
+    </div>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="row g-3 mb-4">
+    <div class="col-sm-6 col-lg-3">
+      <div class="stat-card card border-0 shadow-sm rounded-4 p-4 h-100">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <p class="text-muted small mb-1">Total Balance</p>
+            <h4 class="fw-bold {% if balance >= 0 %}text-success{% else %}text-danger{% endif %} mb-0">
+              ₹{{ "%.2f"|format(balance) }}
+            </h4>
+          </div>
+          <div class="stat-icon bg-{% if balance >= 0 %}success{% else %}danger{% endif %}-subtle rounded-circle p-2">
+            <i class="bi bi-wallet2 fs-4 text-{% if balance >= 0 %}success{% else %}danger{% endif %}"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+      <div class="stat-card card border-0 shadow-sm rounded-4 p-4 h-100">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <p class="text-muted small mb-1">Total Income</p>
+            <h4 class="fw-bold text-success mb-0">₹{{ "%.2f"|format(income) }}</h4>
+          </div>
+          <div class="stat-icon bg-success-subtle rounded-circle p-2">
+            <i class="bi bi-arrow-down-circle fs-4 text-success"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+      <div class="stat-card card border-0 shadow-sm rounded-4 p-4 h-100">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <p class="text-muted small mb-1">Total Expenses</p>
+            <h4 class="fw-bold text-danger mb-0">₹{{ "%.2f"|format(expenses) }}</h4>
+          </div>
+          <div class="stat-icon bg-danger-subtle rounded-circle p-2">
+            <i class="bi bi-arrow-up-circle fs-4 text-danger"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+      <div class="stat-card card border-0 shadow-sm rounded-4 p-4 h-100">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <p class="text-muted small mb-1">Jobs Applied</p>
+            <h4 class="fw-bold text-primary mb-0">{{ my_apps }}</h4>
+          </div>
+          <div class="stat-icon bg-primary-subtle rounded-circle p-2">
+            <i class="bi bi-briefcase fs-4 text-primary"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Recent Transactions -->
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+          <h6 class="fw-bold mb-0"><i class="bi bi-clock-history me-2 text-primary"></i>Recent Transactions</h6>
+          <a href="{{ url_for('transaction_history') }}" class="btn btn-sm btn-outline-primary">View All</a>
+        </div>
+        <div class="card-body px-4 pb-4">
+          {% if recent_txns %}
+            {% for txn in recent_txns %}
+            <div class="d-flex align-items-center justify-content-between py-2 border-bottom last-no-border">
+              <div class="d-flex align-items-center gap-3">
+                <div class="txn-icon rounded-circle p-2 {% if txn.type == 'income' %}bg-success-subtle{% else %}bg-danger-subtle{% endif %}">
+                  <i class="bi {% if txn.type == 'income' %}bi-arrow-down-circle text-success{% else %}bi-arrow-up-circle text-danger{% endif %} fs-5"></i>
+                </div>
+                <div>
+                  <div class="fw-semibold small">{{ txn.category }}</div>
+                  <div class="text-muted" style="font-size:0.78rem;">{{ txn.description or '—' }} · {{ txn.date }}</div>
+                </div>
+              </div>
+              <span class="fw-bold {% if txn.type == 'income' %}text-success{% else %}text-danger{% endif %}">
+                {% if txn.type == 'income' %}+{% else %}−{% endif %}₹{{ "%.2f"|format(txn.amount) }}
+              </span>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="text-center py-5 text-muted">
+              <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+              No transactions yet.
+              <a href="{{ url_for('add_transaction') }}">Add one!</a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Jobs -->
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+          <h6 class="fw-bold mb-0"><i class="bi bi-briefcase me-2 text-primary"></i>Latest Jobs ({{ total_jobs }} available)</h6>
+          <a href="{{ url_for('job_listings') }}" class="btn btn-sm btn-outline-primary">View All</a>
+        </div>
+        <div class="card-body px-4 pb-4">
+          {% for job in recent_jobs %}
+          <div class="job-mini-card p-3 mb-3 rounded-3 border">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h6 class="fw-bold mb-1">{{ job.title }}</h6>
+                <p class="text-muted small mb-1">
+                  <i class="bi bi-building me-1"></i>{{ job.company }}
+                  <span class="mx-2">·</span>
+                  <i class="bi bi-geo-alt me-1"></i>{{ job.location }}
+                </p>
+                {% if job.salary %}
+                  <small class="text-success fw-semibold"><i class="bi bi-currency-rupee"></i>{{ job.salary }}</small>
+                {% endif %}
+              </div>
+              <div class="text-end">
+                <span class="badge job-type-badge-{{ job.type.replace('-','').replace(' ','') }} rounded-pill small">{{ job.type }}</span>
+                <div class="mt-2">
+                  <a href="{{ url_for('job_detail', job_id=job.id) }}" class="btn btn-sm btn-primary">View</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% block title %}Money Management – StudentPortal{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+      <h4 class="fw-bold mb-1"><i class="bi bi-wallet2 me-2 text-primary"></i>Money Management</h4>
+      <p class="text-muted mb-0">Track your income and expenses</p>
+    </div>
+    <a href="{{ url_for('add_transaction') }}" class="btn btn-primary fw-semibold">
+      <i class="bi bi-plus-circle me-2"></i>Add Transaction
+    </a>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm rounded-4 p-4 text-center h-100">
+        <div class="bg-success-subtle rounded-circle d-inline-flex mx-auto p-3 mb-3">
+          <i class="bi bi-arrow-down-circle fs-2 text-success"></i>
+        </div>
+        <p class="text-muted small mb-1">Total Income</p>
+        <h3 class="fw-bold text-success">₹{{ "%.2f"|format(income) }}</h3>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm rounded-4 p-4 text-center h-100">
+        <div class="bg-danger-subtle rounded-circle d-inline-flex mx-auto p-3 mb-3">
+          <i class="bi bi-arrow-up-circle fs-2 text-danger"></i>
+        </div>
+        <p class="text-muted small mb-1">Total Expenses</p>
+        <h3 class="fw-bold text-danger">₹{{ "%.2f"|format(expenses) }}</h3>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm rounded-4 p-4 text-center h-100">
+        <div class="bg-{% if balance >= 0 %}primary{% else %}warning{% endif %}-subtle rounded-circle d-inline-flex mx-auto p-3 mb-3">
+          <i class="bi bi-wallet2 fs-2 text-{% if balance >= 0 %}primary{% else %}warning{% endif %}"></i>
+        </div>
+        <p class="text-muted small mb-1">Net Balance</p>
+        <h3 class="fw-bold text-{% if balance >= 0 %}primary{% else %}warning{% endif %}">₹{{ "%.2f"|format(balance) }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Expense by Category -->
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-header bg-transparent border-0 px-4 pt-4">
+          <h6 class="fw-bold mb-0"><i class="bi bi-pie-chart me-2 text-danger"></i>Expenses by Category</h6>
+        </div>
+        <div class="card-body px-4 pb-4">
+          {% if expense_cats %}
+            {% for cat in expense_cats %}
+            <div class="mb-3">
+              <div class="d-flex justify-content-between mb-1">
+                <span class="small fw-semibold">{{ cat.category }}</span>
+                <span class="small text-danger fw-bold">₹{{ "%.2f"|format(cat.total) }}</span>
+              </div>
+              <div class="progress rounded-pill" style="height:8px">
+                <div class="progress-bar bg-danger" style="width: {{ (cat.total / expenses * 100) | round | int if expenses > 0 else 0 }}%"></div>
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="text-center py-4 text-muted">
+              <i class="bi bi-inbox fs-2 d-block mb-2"></i>No expenses yet.
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Income by Category -->
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-header bg-transparent border-0 px-4 pt-4">
+          <h6 class="fw-bold mb-0"><i class="bi bi-pie-chart me-2 text-success"></i>Income by Category</h6>
+        </div>
+        <div class="card-body px-4 pb-4">
+          {% if income_cats %}
+            {% for cat in income_cats %}
+            <div class="mb-3">
+              <div class="d-flex justify-content-between mb-1">
+                <span class="small fw-semibold">{{ cat.category }}</span>
+                <span class="small text-success fw-bold">₹{{ "%.2f"|format(cat.total) }}</span>
+              </div>
+              <div class="progress rounded-pill" style="height:8px">
+                <div class="progress-bar bg-success" style="width: {{ (cat.total / income * 100) | round | int if income > 0 else 0 }}%"></div>
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="text-center py-4 text-muted">
+              <i class="bi bi-inbox fs-2 d-block mb-2"></i>No income recorded yet.
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Monthly Summary -->
+    <div class="col-12">
+      <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-header bg-transparent border-0 px-4 pt-4 d-flex justify-content-between align-items-center">
+          <h6 class="fw-bold mb-0"><i class="bi bi-bar-chart me-2 text-primary"></i>Monthly Summary</h6>
+          <a href="{{ url_for('transaction_history') }}" class="btn btn-sm btn-outline-primary">Full History</a>
+        </div>
+        <div class="card-body px-4 pb-4">
+          {% if monthly %}
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Month</th>
+                  <th class="text-success">Income</th>
+                  <th class="text-danger">Expenses</th>
+                  <th>Net</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in monthly %}
+                {% set net = row.income - row.expenses %}
+                <tr>
+                  <td class="fw-semibold">{{ row.month }}</td>
+                  <td class="text-success fw-semibold">₹{{ "%.2f"|format(row.income) }}</td>
+                  <td class="text-danger fw-semibold">₹{{ "%.2f"|format(row.expenses) }}</td>
+                  <td class="fw-bold text-{% if net >= 0 %}success{% else %}danger{% endif %}">
+                    {% if net >= 0 %}+{% endif %}₹{{ "%.2f"|format(net) }}
+                  </td>
+                  <td>
+                    <span class="badge rounded-pill bg-{% if net >= 0 %}success{% else %}danger{% endif %}-subtle text-{% if net >= 0 %}success{% else %}danger{% endif %}">
+                      {% if net >= 0 %}Surplus{% else %}Deficit{% endif %}
+                    </span>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="text-center py-4 text-muted">
+            <i class="bi bi-bar-chart fs-2 d-block mb-2"></i>
+            No transaction history yet.
+            <a href="{{ url_for('add_transaction') }}">Add your first transaction.</a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

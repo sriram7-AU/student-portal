@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block title %}Add Transaction – StudentPortal{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="mb-4">
+        <a href="{{ url_for('money_dashboard') }}" class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-arrow-left me-1"></i>Back to Money Overview
+        </a>
+      </div>
+
+      <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-5">
+          <div class="text-center mb-4">
+            <div class="bg-primary rounded-circle d-inline-flex p-3 mb-3">
+              <i class="bi bi-plus-circle fs-2 text-white"></i>
+            </div>
+            <h4 class="fw-bold">Add Transaction</h4>
+            <p class="text-muted">Record your income or expense</p>
+          </div>
+
+          <form id="transactionForm" action="{{ url_for('add_transaction') }}" method="POST" novalidate>
+
+            <!-- Type Toggle -->
+            <div class="mb-4">
+              <label class="form-label fw-semibold">Transaction Type <span class="text-danger">*</span></label>
+              <div class="d-flex gap-3">
+                <div class="type-toggle flex-fill">
+                  <input type="radio" class="btn-check" name="type" id="typeIncome" value="income" checked/>
+                  <label class="btn btn-outline-success w-100 py-2 fw-semibold" for="typeIncome">
+                    <i class="bi bi-arrow-down-circle me-2"></i>Income
+                  </label>
+                </div>
+                <div class="type-toggle flex-fill">
+                  <input type="radio" class="btn-check" name="type" id="typeExpense" value="expense"/>
+                  <label class="btn btn-outline-danger w-100 py-2 fw-semibold" for="typeExpense">
+                    <i class="bi bi-arrow-up-circle me-2"></i>Expense
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Category -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Category <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-tag"></i></span>
+                <select name="category" id="category" class="form-select">
+                  <optgroup label="Income Categories" id="incomeCats">
+                    <option value="Salary / Stipend">Salary / Stipend</option>
+                    <option value="Freelance">Freelance</option>
+                    <option value="Scholarship">Scholarship</option>
+                    <option value="Family / Pocket Money">Family / Pocket Money</option>
+                    <option value="Part-time Job">Part-time Job</option>
+                    <option value="Other Income">Other Income</option>
+                  </optgroup>
+                  <optgroup label="Expense Categories" id="expenseCats">
+                    <option value="Food & Dining">Food &amp; Dining</option>
+                    <option value="Transport">Transport</option>
+                    <option value="Books & Stationery">Books &amp; Stationery</option>
+                    <option value="Rent / Hostel">Rent / Hostel</option>
+                    <option value="Entertainment">Entertainment</option>
+                    <option value="Health & Medicine">Health &amp; Medicine</option>
+                    <option value="Clothing">Clothing</option>
+                    <option value="Internet / Mobile">Internet / Mobile</option>
+                    <option value="Study Materials">Study Materials</option>
+                    <option value="Other Expense">Other Expense</option>
+                  </optgroup>
+                </select>
+              </div>
+              <div class="invalid-feedback d-none" id="categoryError">Please select a category.</div>
+            </div>
+
+            <!-- Amount -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Amount (₹) <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text fw-bold">₹</span>
+                <input type="number" name="amount" id="amount" class="form-control"
+                       placeholder="0.00" min="0.01" step="0.01"/>
+              </div>
+              <div class="invalid-feedback d-none" id="amountError">Enter a valid positive amount.</div>
+            </div>
+
+            <!-- Date -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Date <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
+                <input type="date" name="date" id="txnDate" class="form-control" value="{{ today }}"/>
+              </div>
+              <div class="invalid-feedback d-none" id="dateError">Please select a date.</div>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-4">
+              <label class="form-label fw-semibold">Description <span class="text-muted small">(optional)</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-chat-text"></i></span>
+                <input type="text" name="description" id="description" class="form-control"
+                       placeholder="Brief note about this transaction"/>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold" id="submitTxn">
+              <i class="bi bi-check-circle me-2"></i>Save Transaction
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
