@@ -1,0 +1,121 @@
+/* ─── Global ─────────────────────────────────────── */
+:root {
+  --portal-primary: #4361ee;
+  --portal-success: #2ec4b6;
+  --portal-warning: #ff9f1c;
+  --portal-danger:  #e63946;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background-color: #f5f6fa;
+  color: #2d3436;
+}
+
+/* ─── Landing Page ───────────────────────────────── */
+.landing-page {
+  background: #f5f6fa;
+}
+
+.hero-section {
+  background: linear-gradient(135deg, #4361ee 0%, #7209b7 100%);
+  min-height: 100vh;
+}
+
+.text-white-75 { color: rgba(255,255,255,.75); }
+
+.feature-card {
+  transition: transform .25s ease, box-shadow .25s ease;
+  border-radius: 16px !important;
+}
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(0,0,0,.1) !important;
+}
+
+.feature-icon {
+  width: 60px;
+  height: 60px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── Auth Cards ─────────────────────────────────── */
+.auth-icon {
+  width: 64px;
+  height: 64px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── Navbar ─────────────────────────────────────── */
+.navbar { padding-top: .85rem; padding-bottom: .85rem; }
+.navbar-brand { font-size: 1.2rem; letter-spacing: -.3px; }
+.nav-link { font-weight: 500; padding-right: 1rem !important; padding-left: 1rem !important; }
+.nav-link.active { background: rgba(255,255,255,.15); border-radius: 8px; }
+
+/* ─── Welcome Banner ─────────────────────────────── */
+.welcome-banner {
+  background: linear-gradient(135deg, #4361ee, #7209b7);
+}
+
+/* ─── Stat Cards ─────────────────────────────────── */
+.stat-card { transition: transform .2s ease; }
+.stat-card:hover { transform: translateY(-4px); }
+.stat-icon { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; }
+
+/* ─── Transaction Rows ───────────────────────────── */
+.txn-icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+.last-no-border:last-child { border-bottom: none !important; }
+
+/* ─── Job Cards ──────────────────────────────────── */
+.job-card { transition: transform .2s ease, box-shadow .2s ease; }
+.job-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,.08) !important; }
+.job-company-logo    { width: 48px; height: 48px; display:flex; align-items:center; justify-content:center; }
+.job-company-logo-lg { width: 72px; height: 72px; display:flex; align-items:center; justify-content:center; }
+.job-description     { line-height: 1.6; }
+
+/* ─── Job Type Badges ────────────────────────────── */
+.job-type-badge-internship  { background: #e0f2fe; color: #0369a1; }
+.job-type-badge-parttime    { background: #fef3c7; color: #92400e; }
+.job-type-badge-fulltime    { background: #dcfce7; color: #166534; }
+.job-type-badge-remote      { background: #f3e8ff; color: #6b21a8; }
+
+/* ─── Password Strength Bar ──────────────────────── */
+#strengthBar { animation: fadeIn .3s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ─── Form Validation States ─────────────────────── */
+.input-group .form-control.is-invalid { border-color: #dc3545; }
+.input-group .form-control.is-valid   { border-color: #198754; }
+
+/* ─── Cover Letter Textarea ──────────────────────── */
+#coverLetter {
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.7;
+}
+
+/* ─── Mini Job Card (Dashboard) ──────────────────── */
+.job-mini-card {
+  background: #fff;
+  transition: box-shadow .2s ease;
+}
+.job-mini-card:hover { box-shadow: 0 4px 15px rgba(0,0,0,.08) !important; }
+
+/* ─── Responsive Tweaks ──────────────────────────── */
+@media (max-width: 576px) {
+  .display-4 { font-size: 2rem; }
+  .card-body  { padding: 1.5rem !important; }
+}
+
+/* ─── Scrollbar ──────────────────────────────────── */
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #a0a0a0; }
+
+/* ─── Utility ────────────────────────────────────── */
+.rounded-4 { border-radius: 1rem !important; }
+.rounded-5 { border-radius: 1.5rem !important; }
+.shadow-soft { box-shadow: 0 4px 20px rgba(0,0,0,.06) !important; }

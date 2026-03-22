@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% block title %}My Applications – StudentPortal{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+      <h4 class="fw-bold mb-1"><i class="bi bi-file-earmark-check me-2 text-primary"></i>My Applications</h4>
+      <p class="text-muted mb-0">{{ apps|length }} application(s) submitted</p>
+    </div>
+    <a href="{{ url_for('job_listings') }}" class="btn btn-primary fw-semibold">
+      <i class="bi bi-search me-2"></i>Browse More Jobs
+    </a>
+  </div>
+
+  <!-- Status Summary -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="card border-0 shadow-sm rounded-4 p-3 text-center">
+        <h4 class="fw-bold text-warning mb-0">{{ status_counts.pending }}</h4>
+        <small class="text-muted">Pending</small>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card border-0 shadow-sm rounded-4 p-3 text-center">
+        <h4 class="fw-bold text-info mb-0">{{ status_counts.reviewed }}</h4>
+        <small class="text-muted">Reviewed</small>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card border-0 shadow-sm rounded-4 p-3 text-center">
+        <h4 class="fw-bold text-success mb-0">{{ status_counts.accepted }}</h4>
+        <small class="text-muted">Accepted</small>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card border-0 shadow-sm rounded-4 p-3 text-center">
+        <h4 class="fw-bold text-danger mb-0">{{ status_counts.rejected }}</h4>
+        <small class="text-muted">Rejected</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Applications List -->
+  {% if apps %}
+  <div class="row g-4">
+    {% for app in apps %}
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div class="d-flex align-items-center gap-3">
+              <div class="bg-primary-subtle rounded-3 p-2">
+                <i class="bi bi-building fs-4 text-primary"></i>
+              </div>
+              <div>
+                <h6 class="fw-bold mb-0">{{ app.title }}</h6>
+                <small class="text-muted">{{ app.company }}</small>
+              </div>
+            </div>
+            <span class="badge rounded-pill
+              {% if app.status == 'pending'  %}bg-warning text-dark
+              {% elif app.status == 'reviewed' %}bg-info text-white
+              {% elif app.status == 'accepted' %}bg-success
+              {% elif app.status == 'rejected' %}bg-danger
+              {% endif %} px-3 py-2">
+              <i class="bi bi-{% if app.status == 'pending' %}hourglass-split{% elif app.status == 'reviewed' %}eye{% elif app.status == 'accepted' %}check-circle{% else %}x-circle{% endif %} me-1"></i>
+              {{ app.status | capitalize }}
+            </span>
+          </div>
+
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <span class="badge bg-light text-dark border">
+              <i class="bi bi-geo-alt me-1 text-primary"></i>{{ app.location }}
+            </span>
+            <span class="badge job-type-badge-{{ app.type.replace('-','').replace(' ','') }}">
+              {{ app.type }}
+            </span>
+            {% if app.salary %}
+            <span class="badge bg-success-subtle text-success">
+              <i class="bi bi-currency-rupee"></i>{{ app.salary }}
+            </span>
+            {% endif %}
+          </div>
+
+          <p class="text-muted small mb-3">
+            <i class="bi bi-calendar3 me-1"></i>Applied on {{ app.applied_date }}
+          </p>
+
+          <!-- Cover Letter Preview -->
+          <div class="cover-preview p-3 bg-light rounded-3 mb-3" style="font-size:0.8rem; max-height:80px; overflow:hidden; position:relative;">
+            {{ app.cover_letter }}
+            <div style="position:absolute;bottom:0;left:0;right:0;height:30px;background:linear-gradient(transparent,#f8f9fa)"></div>
+          </div>
+
+          <div class="d-flex gap-2">
+            <a href="{{ url_for('job_detail', job_id=app.job_id) }}" class="btn btn-sm btn-outline-primary flex-fill">
+              <i class="bi bi-eye me-1"></i>View Job
+            </a>
+            {% if app.status == 'pending' %}
+            <form method="POST" action="{{ url_for('withdraw_application', app_id=app.id) }}"
+                  class="withdraw-form d-inline flex-fill"
+                  data-title="{{ app.title }}">
+              <button type="button" class="btn btn-sm btn-outline-danger w-100 withdraw-btn">
+                <i class="bi bi-x-circle me-1"></i>Withdraw
+              </button>
+            </form>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="text-center py-5">
+    <div class="bg-primary-subtle rounded-circle d-inline-flex p-4 mb-4">
+      <i class="bi bi-file-earmark-x fs-1 text-primary"></i>
+    </div>
+    <h5 class="fw-bold">No Applications Yet</h5>
+    <p class="text-muted">Start applying to jobs to see your applications here.</p>
+    <a href="{{ url_for('job_listings') }}" class="btn btn-primary px-4">
+      <i class="bi bi-search me-2"></i>Browse Jobs
+    </a>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Withdraw Confirm Modal -->
+<div class="modal fade" id="withdrawModal" tabindex="-1">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content rounded-4 border-0 shadow">
+      <div class="modal-body text-center p-4">
+        <i class="bi bi-exclamation-triangle fs-1 text-warning mb-3 d-block"></i>
+        <h6 class="fw-bold mb-2">Withdraw Application?</h6>
+        <p class="text-muted small mb-4" id="withdrawModalMsg"></p>
+        <div class="d-flex gap-2 justify-content-center">
+          <button class="btn btn-secondary btn-sm px-4" data-bs-dismiss="modal">Keep It</button>
+          <button class="btn btn-danger btn-sm px-4" id="confirmWithdrawBtn">Withdraw</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
